@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets">
+    <head>
+        <title>TODO supply a title</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    </head>
+    <body>
+        <table>
+            <thead>
+                <tr>
+                    <th>Id</th>
+                    <th>Name_EN</th>
+                    <th>Name_RU</th>
+                    <th>Name_UA</th>
+                    <th>CAS</th>
+                    <th>EINECS</th>
+                    <th>SMILE</th>
+                    <th>DESCRIPTION</th>
+                </tr>
+            </thead>
+            <tbody>
+                <ui:repeat value="#{inciList}" var="inci">
+                    <tr>
+                        <td>${inci.id}</td>
+                        <td><a href="inciView?id=${inci.id}">${inci.nameEn}</a></td>
+                        <td>${inci.nameRu}</td>
+                        <td>${inci.nameUa}</td>
+                        <td>${inci.cas}</td>
+                        <td>${inci.einecs}</td>
+                        <td>${inci.smile}</td>
+                        <td>${inci.description}</td>
+                    </tr>            
+                </ui:repeat>
+            </tbody>
+        </table>
+        <a href="addInci">Add new inci</a><br/>
+    </body>
+</html>

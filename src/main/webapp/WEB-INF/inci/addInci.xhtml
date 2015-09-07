@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets">
+    <head>
+        <title>TODO supply a title</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+        <style type="text/css">
+            ul.LinkedList { display: block; }
+            /* ul.LinkedList ul { display: none; } */
+            .HandCursorStyle { cursor: pointer; cursor: hand; }  /* For IE */
+        </style>
+
+        <script type="text/JavaScript">
+            //  <![CDATA[
+            // Add this to the onload event of the BODY element
+            function addEvents() {
+            document.getElementById("LinkedList1").innerHTML = document.getElementById("categoryOutput").value;
+            activateTree(document.getElementById("LinkedList1"));
+            }
+
+            // This function traverses the list and add links 
+            // to nested list items
+            function activateTree(oList) {
+            // Collapse the tree
+            for (var i=0; i < oList.getElementsByTagName("ul").length; i++) {
+            oList.getElementsByTagName("ul")[i].style.display="none";            
+            }                                                                  
+            // Add the click-event handler to the list items
+            if (oList.addEventListener) {
+            oList.addEventListener("click", toggleBranch, false);
+            } else if (oList.attachEvent) { // For IE
+            oList.attachEvent("onclick", toggleBranch);
+            }
+            // Make the nested items look like links
+            addLinksToBranches(oList);
+            }
+
+            // This is the click-event handler
+            function toggleBranch(event) {
+            var oBranch, cSubBranches;
+            if (event.target) {
+            oBranch = event.target;
+            } else if (event.srcElement) { // For IE
+            oBranch = event.srcElement;
+            }
+            cSubBranches = oBranch.getElementsByTagName("ul");
+            if (cSubBranches.length > 0) {
+            if (cSubBranches[0].style.display == "block") {
+            cSubBranches[0].style.display = "none";
+            } else {
+            cSubBranches[0].style.display = "block";
+            }
+            }
+            }
+
+            // This function makes nested list items look like links
+            function addLinksToBranches(oList) {
+            var cBranches = oList.getElementsByTagName("li");
+            var i, n, cSubBranches;
+            if (cBranches.length > 0) {
+            for (i=0, n = cBranches.length; i < n; i++) {
+            cSubBranches = cBranches[i].getElementsByTagName("ul");
+            if (cSubBranches.length > 0) {
+            addLinksToBranches(cSubBranches[0]);
+            cBranches[i].className = "HandCursorStyle";
+            cBranches[i].style.color = "blue";
+            cSubBranches[0].style.color = "black";
+            cSubBranches[0].style.cursor = "auto";
+            }
+            }
+            }
+            }
+            //]]>
+        </script>
+
+    </head>
+    <body onload="addEvents();">
+
+        <form method="POST" action="${action}" id="addInci" name="addInci">
+
+            <label for="name_en">Name_EN:</label>
+            <input type="text" id="name_en" name="name_en" value="${inci.nameEn}"/><br/>
+
+            <label for="name_ru">Name_RU:</label>
+            <input type="text" id="name_ru" name="name_ru" value="${inci.nameRu}"/><br/>
+
+            <label for="name_ua">Name_UA:</label>
+            <input type="text" id="name_ua" name="name_ua" value="${inci.nameUa}"/><br/>
+
+            <label for="cas">CAS:</label>
+            <input type="text" name="cas" id="cas" value="${inci.cas}"/><br/>
+
+            <label for="einecs">EINECS:</label>
+            <input type="text" name="einecs" id="einecs" value="${inci.einecs}"/><br/>
+
+            <label for="smile">SMILE:</label>
+            <input type="text" name="smile" id="smile" value="${inci.smile}"/><br/>
+
+            <label for="desc">Description:</label>
+            <textarea id="desc" name="desc" style="width:300px;height:100px">${inci.description}</textarea><br/>
+
+            <input type="hidden" id="id" name="id" value="${inci.id}"/>  
+            <input type="submit" name="submit" id="submit" value="Submit"/>
+        </form>
+        <ui:fragment rendered="${action != 'addInciData'}">
+
+            Properties:<br/>
+
+            <ui:repeat value="${inci.inciPropertyCollection}" var="property">
+
+                <form method="POST" action="updateProperty" id="updateProperty" name="updateProperty">
+
+                    ${property.property.nameEn} ${property.property.nameRu} ${property.property.nameUa} 
+
+                    <label for="prop_value">Value:</label>
+                    <input type="text" id="prop_value" name="prop_value" value="${property.propertyValue}"/>
+                    <select id="prop_unit" name="prop_unit">
+                        <option value=""></option>
+                        <ui:repeat value="#{property.property.propertyUnitCollection}" var="propertyUnit">
+                            <ui:fragment rendered="${property.propertyUnitId.id == propertyUnit.id}"><option selected="selected" value="${propertyUnit.id}">${propertyUnit.name}</option></ui:fragment>
+                            <ui:fragment rendered="${property.propertyUnitId.id != propertyUnit.id}"><option value="${propertyUnit.id}">${propertyUnit.name}</option></ui:fragment>
+                        </ui:repeat>
+                    </select>
+                    <input type="hidden" id="prop_id" name="prop_id" value="${property.property.id}"/>
+                    <input type="hidden" id="inci_id" name="inci_id" value="${inci.id}"/>
+                    <input type="submit" name="updatePropertyButton" id="updatePropertyButton" value="Update"/>
+                </form>
+                Create New Unit
+                <form method="POST" action="createPropertyUnit" id="createPropertyUnit" name="createPropertyUnit">
+                    <input type="text" id='new_prop_unit' name='new_prop_unit' />
+                    <input type="hidden" id="prop_id" name="prop_id" value="${property.property.id}"/>
+                    <input type="hidden" id="inci_id" name="inci_id" value="${inci.id}"/>
+                    <input type="submit" name="submit" id="submit" value="Create"/>
+                </form>
+                <form method="POST" action="deleteProperty" id="deleteProperty" name="deleteProperty">
+                    <input type="hidden" id="prop_id" name="prop_id" value="${property.property.id}"/>
+                    <input type="hidden" id="inci_id" name="inci_id" value="${inci.id}"/>
+                    <input type="submit" name="submit" id="submit" value="Delete"/>
+                </form>
+            </ui:repeat>
+
+            Add Property: <br/>
+
+            <form method="POST" action="addProperty" id="addProperty" name="addProperty">
+                <select id="newProperty" name="newProperty">
+                    <ui:repeat value="#{propertyList}" var="propertyItem">
+                        <option value="${propertyItem.id}">${propertyItem.nameEn}</option>  
+                    </ui:repeat>
+                </select>
+                <input type="hidden" id="id" name="id" value="${inci.id}"/> 
+                <input type="submit" name="addPropertyButton" id="addPropertyButton" value="Add"/>
+            </form>  
+
+            Create Property: <br/>
+
+            <form method="POST" action="createProperty" id="createProperty" name="createProperty">
+
+                <label for="prop_name_en">Name_EN:</label>
+                <input type="text" id="prop_name_en" name="prop_name_en"/><br/>
+
+                <label for="prop_name_ru">Name_RU:</label>
+                <input type="text" id="prop_name_ru" name="prop_name_ru"/><br/>
+
+                <label for="prop_name_ua">Name_UA:</label>
+                <input type="text" id="prop_name_ua" name="prop_name_ua"/><br/>
+
+                <input type="hidden" id="inci_id" name="inci_id" value="${inci.id}"/>
+                <input type="submit" name="createPropertyButton" id="createPropertyButton" value="Create"/>
+            </form>
+
+            Structural Category:<br />
+            <ui:repeat value="#{inci.categoryStructuralCollection}" var="categoryStructural">
+                ${categoryStructural.nameEn} ${categoryStructural.nameRu} ${categoryStructural.nameUa}
+                <form method="POST" action="deleteStructuralCategory" id="deleteStructuralCategory" name="deleteStructuralCategory">
+                    <input type="hidden" id="cat_struc_id" name="cat_struc_id" value="${categoryStructural.id}"/>
+                    <input type="hidden" id="inci_id" name="inci_id" value="${inci.id}"/>
+                    <input type="submit" name="submit" id="submit" value="Delete"/>
+                </form><br/>
+            </ui:repeat>
+
+            <input type="hidden" id ="categoryOutput" value="${categoryOutput}"/>
+
+            <ul id="LinkedList1" class="LinkedList">
+            </ul>
+
+        </ui:fragment>
+    </body>
+</html>

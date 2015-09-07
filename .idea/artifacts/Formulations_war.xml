@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="war" name="Formulations:war">
+    <output-path>$PROJECT_DIR$/target</output-path>
+    <root id="archive" name="Formulations-1.0-4.0.1.RELEASE.war">
+      <element id="artifact" artifact-name="Formulations:war exploded" />
+    </root>
+  </artifact>
+</component>

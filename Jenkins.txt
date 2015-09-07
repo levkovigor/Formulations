@@ -1,0 +1,6 @@
+Jenkins created successfully.  Please make note of these credentials:
+
+   User: admin
+   Password: Ra8khNC9bHI1
+
+Note:  You can change your password at: https://jenkins-chemicals.rhcloud.com/me/configure
